@@ -1,0 +1,1014 @@
+---
+title: "Analyse bibliométrique du corpus des sciences de la conservation"
+author: "Djibril Kane"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+Aria, M. & Cuccurullo, C. (2017) bibliometrix: An R-tool for comprehensive science mapping analysis,Journal of Informetrics, 11(4), pp 959-975, Elsevier.
+
+```{r include=FALSE}
+#install.packages("bibliometrix", dependencies = TRUE)
+library(bibliometrix)
+```
+
+
+
+
+
+
+
+
+# Lecture et conversion du jeu de données
+```{r include=FALSE}
+#Pour le corpus de 130 articles
+file <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS.bib"
+
+M <- convert2df(file = file, dbsource = "isi", format = "bibtex")
+
+#Pour le corpus associé uniquement (26 articles)
+file2bis <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR.bib"
+
+M2bis <- convert2df(file = file2bis, dbsource = "isi", format = "bibtex")
+#Pour le corpus de 130 articles et son subcorpus correspondant aux 21 articles du réseau de co-citation disponibles sur le WOS: 
+file2 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Corpus ET Subcorpus 130 ET 21.bib"
+
+M2 <- convert2df(file = file2, dbsource = "isi", format = "bibtex")
+
+#Pour chacune des catégories du corpus (130 articles) : 
+
+#categorie 1
+cat1 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS_categorie_1.bib"
+
+cat1 <- convert2df(file = cat1, dbsource = "isi", format = "bibtex")
+
+#categorie 2
+cat2 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS_categorie_2.bib"
+
+cat2 <- convert2df(file = cat2, dbsource = "isi", format = "bibtex")
+
+#categorie 3
+cat3 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS_categorie_3.bib"
+
+cat3 <- convert2df(file = cat3, dbsource = "isi", format = "bibtex")
+#categorie 4
+cat4 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS_categorie_4.bib"
+
+cat4 <- convert2df(file = cat4, dbsource = "isi", format = "bibtex")
+#categorie 5
+cat5 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Donnees_Biblio_WOS_sans_HS_categorie_5.bib"
+
+cat5 <- convert2df(file = cat5, dbsource = "isi", format = "bibtex")
+
+
+
+#Pour le corpus de 130 articles aléatoirement tirés de l'ensemble des articles produits par tous les journaux du corpus depuis 1985 (60000 et quelques articles): 
+file5 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/130_ALEATOIRES_All_Journals.bib"
+
+M5 <- convert2df(file = file5, dbsource = "isi", format = "bibtex")
+
+#Pour tous les articles de tous les 19 journaux : (ne marche pas car mauvais format)
+file6 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/wos_output_for_bibliometrix.bib"
+
+M6 <- convert2df(file = file6, dbsource = "wos", format = "bibtex")
+
+
+```
+
+On observe de forts liens entre les articles du subcorpus, car certains reviennent lorsqu'on étudie le niveau inférieur de citations. Je vais essayer d'étudier à part les différents ensembles du subcorpus, pour vérifier l'hypothèse selon laquelle le débat en SHS a impacté les sciences de la conservation. Si des acteurs du débat en SHS ne se retrouvent pas cités par les articles du subcorpus, l'hypothèse sera invalidée (à moins de continuer de subcorpus en sub-subcorpus etc.)
+ 
+ ## Partie "Décoloniale" du subcorpus: 
+```{r include=FALSE}
+#Partie "Décoloniale" du subcorpus
+#Pour le subcorpus uniquement (26 articles)
+Decol <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR_deco.bib"
+
+Decoldf <- convert2df(file = Decol, dbsource = "isi", format = "bibtex")
+
+```
+## Partie "Political Ecology" du subcorpus: 
+```{r include=FALSE}
+#Partie "Décoloniale" du subcorpus
+#Pour le subcorpus uniquement (26 articles)
+Poleco <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR_polit-eco.bib"
+
+Polecodf <- convert2df(file = Poleco, dbsource = "isi", format = "bibtex")
+
+```
+## Partie "New conservation" du subcorpus: 
+```{r include=FALSE}
+#Partie "Décoloniale" du subcorpus
+#Pour le subcorpus uniquement (26 articles)
+Newcons <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR_new-cons.bib"
+
+Newconsdf <- convert2df(file = file2bis, dbsource = "isi", format = "bibtex")
+
+```
+## Partie "Foundateurs" du subcorpus: 
+```{r include=FALSE}
+#Partie "Décoloniale" du subcorpus
+#Pour le subcorpus uniquement (26 articles)
+Fondat <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR_founders.bib"
+
+Fondatdf <- convert2df(file = Fondat, dbsource = "isi", format = "bibtex")
+
+```
+## Partie "Ecology & Society/IPBES-like" du subcorpus: 
+```{r include=FALSE}
+#Partie "Décoloniale" du subcorpus
+#Pour le subcorpus uniquement (26 articles)
+EcoSoc <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Subcorpus_CR_eco&soc.bib"
+
+EcoSocdf <- convert2df(file = EcoSoc, dbsource = "isi", format = "bibtex")
+
+```
+
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+
+
+#Pour le corpus de tous les journaux
+file3 <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/wos_output_for_bibliometrix.bib"
+
+M3 <- convert2df(file = file3, format = "bibtex")
+
+```
+
+# Analyse bibliométrique
+
+Requête faite au WOS pour le corpus étudié : 
+https://www.webofscience.com/wos/woscc/summary/508a1630-216e-4a7a-96d5-7e3a05385a72-01a6f2a074/relevance/1
+
+## Analyses générales
+```{r include=FALSE}
+results <- biblioAnalysis(M, sep = ";")
+```
+
+Je choisis volontairement de ne pas m'attarder sur les H-index et autres indicateurs de citation ou de "productivité".
+Cependant, un rapide coup d'oeil sur les principaux auteurs et leurs années de production peut être utile pour la suite.
+
+### Productivité des auteurs principaux au cours du temps
+```{r echo=FALSE, warning=FALSE}
+topAU <- authorProdOverTime(M, k = 10, graph = TRUE)
+```
+
+    
+## Visualisation du réseau bibliographique 
+
+### Collaboration entre pays
+
+```{r}
+# Création du réseau de collaboration entre pays
+
+M <- metaTagExtraction(M, Field = "AU_CO", sep = ";")
+NetMatrix <- biblioNetwork(M, analysis = "collaboration", network = "countries", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix, n = dim(NetMatrix)[1], Title = "Collaboration entre pays - Corpus", type = "circle", size=TRUE, remove.multiple=FALSE,labelsize=0.7,cluster="infomap") #je mets infomap juste pour simplifier la lecture.   Essayer de changer et de mettre type = fruchterman ou autre pour une meilleur visualisation.
+
+
+```
+
+On observe une forte polarisation Nord global VS Sud global en termes de nombres d’articles produits (cependant le signal est brouillé par le fait que l’analyse a lieu à partir du WOS).
+A titre de comparaison, voici le graphe de collaboration pour un échantillon aléatoire rééquilibré de l'ensemble des journaux dont est issu le corpus (130 articles tirés au sort sur 60 000 résultats sur le WOS)
+
+### Collaboration entre pays, ensemble des articles des 19 journaux (non fonctionnel car format pas adapté)
+
+```{r echo=FALSE}
+# Création du réseau de collaboration entre pays
+
+M6.1 <- metaTagExtraction(M6, Field = "AU_CO", sep = ";")
+NetMatrix6 <- biblioNetwork(M6.1, analysis = "collaboration", network = "countries", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix6, n = dim(NetMatrix6)[1], Title = "Collaboration entre pays - Tous articles des 19 principaux journaux de la conservation", type = "circle", size=TRUE, remove.multiple=FALSE,labelsize=0.7,cluster="infomap") #je mets infomap juste pour simplifier la lecture.   Essayer de changer et de mettre type = fruchterman ou autre pour une meilleur visualisation.
+
+
+```
+La taille des points est proportionnelle au nombre d'articles publiés, ce qui permet d'établir une comparaison. 
+On note qu'à l'échelle de tous les articles produits par les principaux journaux de la conservation, il y a moins de pays qui collaborent, mais les collaborations sont moins 'déséquilibrées'. 
+
+
+### Collaboration entre pays, 130 articles tirés au hasard de l'ensemble des journaux du WOS
+
+```{r echo=FALSE}
+# Création du réseau de collaboration entre pays
+
+M5.1 <- metaTagExtraction(M5, Field = "AU_CO", sep = ";")
+NetMatrix5 <- biblioNetwork(M5.1, analysis = "collaboration", network = "countries", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix5, n = dim(NetMatrix5)[1], Title = "Collaboration entre pays - 130 articles des 19 principaux journaux de la conservation", type = "circle", size=TRUE, remove.multiple=FALSE,labelsize=0.7,cluster="infomap") #je mets infomap juste pour simplifier la lecture.   Essayer de changer et de mettre type = fruchterman ou autre pour une meilleur visualisation.
+
+```
+
+
+### Réseau de co-citation et autres analyses
+
+Une co-citation correspond au cas où deux publications ou auteurs sont mentionnés ensemble dans le même article.
+Les ensembles obtenus pourraient servir à mieux cerner les approches développées en biologie de la conservation. Il convient cependant d'approcher l'interprétation avec précaution.
+cf.
+
+Small,  H. (1999)  ‘Visualizing Science  by Citation  Mapping’, Journal  of  the  American  Society for  Information  Science,
+50: 799–813.
+
+Small, H. (1973) ‘Co-citation in the Scientiﬁc Literature: A New Measure  of  the Relationship  between  Two  Documents’, Journal  of  the  American  Society for  Information  Science, 24: 265–9.
+
+
+#### Corpus
+```{r echo=FALSE}
+
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultsCorpus <- biblioAnalysis(M, sep = ";")
+plot(resultsCorpus)
+resultsCorpus$MostCitedPapers
+resultsCorpus$Sources
+#Création du réseau
+
+NetMatrix2 <- biblioNetwork(M, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix2, n = 30, Title = "Réseau de co-citation ", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5, curved = T)
+
+#Réseau avec articles du subcorpus et du corpus
+NetMatrix3 <- biblioNetwork(M2, analysis = "co-citation", network = "references", sep = ";")
+
+
+#Création du réseau de mots-clés
+NetMatrixCorpus <- biblioNetwork(M, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixCorpus, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, corpus entier", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+Test
+```{r}
+couplingMap(
+M,
+analysis = "documents",
+field = "CR",
+n = 500,
+label.term = NULL,
+ngrams = 1,
+impact.measure = "local",
+minfreq = 5,
+community.repulsion = 0.1,
+stemming = FALSE,
+size = 0.5,
+n.labels = 1,
+repel = TRUE,
+cluster = "walktrap"
+)
+```
+
+##### Corpus, par catégorie
+
+
+
+###### Approche historicisante
+```{r echo=FALSE}
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultscat1 <- biblioAnalysis(cat1, sep = ";")
+plot(resultscat1)
+resultscat1$MostCitedPapers
+resultscat1$Sources
+
+#Création du réseau de cocitation
+
+NetMatrixcat1 <- biblioNetwork(cat1, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat1, n = 10, Title = "Réseau de co-citation de l'approche historicisante", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+
+#Création du réseau de mots-clés
+NetMatrixcat1.2 <- biblioNetwork(cat1, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+NetMatrixcat1.2 <- biblioNetwork(cat1, analysis = "co-occurrences", network = "abstracts", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat1.2, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, Approche historicisante", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+###### Approche interactionniste
+```{r echo=FALSE}
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultscat2 <- biblioAnalysis(cat2, sep = ";")
+plot(resultscat2)
+resultscat2$MostCitedPapers
+resultscat2$Sources
+#Création du réseau
+
+NetMatrixcat2 <- biblioNetwork(cat2, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat2, n = 10, Title = "Réseau de co-citation de l'approche interactionniste", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+
+
+#Création du réseau de mots-clés
+NetMatrixcat2.2 <- biblioNetwork(cat2, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat2.2, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, Approche interactionniste", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+
+###### Approche managériale
+```{r echo=FALSE}
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultscat3 <- biblioAnalysis(cat3, sep = ";")
+plot(resultscat3)
+resultscat3$MostCitedPapers
+resultscat3$Sources
+#Création du réseau
+
+NetMatrixcat3 <- biblioNetwork(cat3, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat3, n = 10, Title = "Réseau de co-citation de l'approche managériale", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+
+
+#Création du réseau de mots-clés
+NetMatrixcat3.2 <- biblioNetwork(cat3, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat3.2, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, Approche managériale", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+###### Approche décoloniale réformiste
+```{r echo=FALSE}
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultscat4 <- biblioAnalysis(cat4, sep = ";")
+plot(resultscat4)
+resultscat4$MostCitedPapers
+resultscat4$Sources
+#Création du réseau
+
+NetMatrixcat4 <- biblioNetwork(cat4, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat4, n = 10, Title = "Réseau de co-citation de l'approche décoloniale réformiste", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+
+
+#Création du réseau de mots-clés
+NetMatrixcat4.2 <- biblioNetwork(cat4, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat4.2, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, Approche décoloniale réformiste", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+
+###### Approche décoloniale radicale
+```{r echo=FALSE}
+#Résultats utiles : collaborations, most cited papers, sources, annual scientific production
+resultscat5 <- biblioAnalysis(cat5, sep = ";")
+plot(resultscat5)
+resultscat5$MostCitedPapers
+resultscat5$Sources
+#Création du réseau
+
+NetMatrixcat5 <- biblioNetwork(cat5, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat5, n = 10, Title = "Réseau de co-citation de l'approche décoloniale radicale", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+
+
+#Création du réseau de mots-clés
+NetMatrixcat5.2 <- biblioNetwork(cat5, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixcat5.2, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés, Approche décoloniale radicale", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+
+
+#### Subcorpus
+###### Subcorpus entier
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus
+#Création du réseau
+
+NetMatrix2bis <- biblioNetwork(M2bis, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix2bis, n = 30, Title = "Réseau de co-citation ", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5)
+
+
+
+
+```
+
+
+###### Ensembles du subcorpus (décolonial, political ecology, etc (noms provisoires))
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus, par ensemble
+
+#Création du réseau
+
+NetMatrixDecol <- biblioNetwork(Decoldf, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixDecol, n = 30, Title = "Réseau de co-citation de l'ensemble 'décolonial' du Subcorpus", type = "fruchterman", size=T, remove.multiple=F, labelsize=0.7,edgesize = 5)
+```
+
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus, par ensemble
+
+#Création du réseau
+
+NetMatrixPoleco <- biblioNetwork(Polecodf, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixPoleco, n = 30, Title = "Réseau de co-citation de l'ensemble 'écologie politique' du Subcorpus", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5)
+```
+
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus, par ensemble
+
+#Création du réseau
+
+NetMatrixFondat <- biblioNetwork(Fondatdf, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixFondat, n = 30, Title = "Réseau de co-citation de l'ensemble 'fondateurs' du Subcorpus", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5)
+```
+
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus, par ensemble
+
+#Création du réseau
+
+NetMatrixNewCons <- biblioNetwork(Newconsdf, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixNewCons, n = 30, Title = "Réseau de co-citation de l'ensemble 'new conservation' du Subcorpus", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5)
+```
+
+```{r echo=FALSE}
+#Réseau de co-citation établi à partir des Cited References des articles du subcorpus, par ensemble
+
+#Création du réseau
+
+NetMatrixEcoSoc <- biblioNetwork(EcoSocdf, analysis = "co-citation", network = "references", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrixEcoSoc, n = 30, Title = "Réseau de co-citation de l'ensemble 'Ecology & Society/IPBES-like' du Subcorpus", type = "fruchterman", size=T, remove.multiple=FALSE, labelsize=0.7,edgesize = 5)
+```
+
+
+L'hypothèse n'est pas validée directement : on confirme cependant une interaction forte entre les éléments du subcorpus. Une analyse plus fine, par lecture des références bibliographiques du subcorpus, permet en revanche de confirmer notre hypothèse : les auteurs post-coloniaux et anticoloniaux sont cités. En revanche, aucun auteur décolonial repéré n'est cité directement dans le subcorpus. Voir discussion.
+
+
+
+
+
+### Co-occurrence de mots-clés
+```{r echo=FALSE}
+#Création du réseau
+NetMatrix <- biblioNetwork(M, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+# Visualisation
+net=networkPlot(NetMatrix, normalize="association", weighted=T, n = 30, Title = "Co-occurrence de mots-clés", type = "fruchterman", size=T,edgesize = 5,labelsize=0.7)
+```
+
+Note additionnelle : conception du réseau de co-occurence de mots-clés
+
+```{r echo=FALSE}
+NetMatrix <- biblioNetwork(M, analysis = "co-occurrences", network = "keywords", sep = ";")
+netstat <- networkStat(NetMatrix)
+summary(netstat, k=10)
+```
+
+"This group of statistics allows to describe the structural properties of a network:
+Size is the number of vertices composing the network;
+ Density is the proportion of present edges from all possible edges in the network;
+Transitivity is the ratio of triangles to connected triples;
+Diameter is the longest geodesic distance (length of the shortest path between two nodes) in the network;
+ Degree distribution is the cumulative distribution of vertex degrees;
+Degree centralization is the normalized degree of the overall network;
+Closeness centralization is the normalized inverse of the vertex average geodesic distance to others in the network;
+ Eigenvector centralization is the first eigenvector of the graph matrix;
+Betweenness centralization is the normalized number of geodesics that pass through the vertex;
+Average path length is the mean of the shortest distance between each pair of vertices in the network."
+    
+
+
+### Analyse des Correspondances Multiples : changer ici en retirant les mots-clés.
+
+```{r echo=FALSE}
+# Structure conceptuelle, à partir de mots-clés (méthode : ACM)# 
+
+CS <- conceptualStructure(M,field="AB", method="MCA", minDegree=4, clust=4, stemming=FALSE, labelsize=10, documents=130)
+```
+
+Les graphes obtenus correspondent à :
+
+- Une carte de la structure conceptuelle du corpus (méthode : Analyse des correspondances), basée sur une extraction des termes de UPDATE l'abstract (+ si stemming = TRUE inclut l'algorithme de Porter qui permet de ramener les mots dérivés à leur forme de base (ex : le mot "behavioral" est ramené à  "behavior")) = lemmification ?.
+
+- Un dendrogramme des sujets des articles
+
+- Une carte factorielle (= visualisation de groupes d'articles) des articles pesant le plus dans la structure conceptuelle (à vérifier)
+
+- Une carte factorielle des articles les plus cités.
+
+On observe une mention des indigenous people souvent associée aux enjeux de gestion ; cela pourrait être utile à l'interprétation/discussion ?
+
+### Réseau de citations directes, au cours du temps
+```{r echo=FALSE}
+# Ajout du subcorpus issu du réseau de co-citations au corpus initial : voir variable M2 au début du code.
+
+options(width=130)
+histResults <- histNetwork(M, min.citations = 0, sep = ";")
+# Visualisation
+net <- histPlot(histResults, n=30, size = 10, labelsize=3)
+
+histResults2 <- histNetwork(M2, min.citations = 0, sep = ";")
+# Visualisation
+net <- histPlot(histResults2, n=30, size = 10, labelsize=3)
+
+```
+
+Note : il est possible de jouer sur le nombre d'articles affichés en modifiant la valeur de n dans la dernière ligne de code.
+Ce mode de visualisation pourrait permettre de mieux comprendre le développement des idées au fur et à mesure de l'histoire récente de la discipline.
+
+
+
+# Catégorisation des articles 
+## Comparaison entre les classifications de DK et VDV: Matrice de confusion
+
+### Résultats individuels
+```{r}
+DKane <- c(
+"2","1","1","2","2",
+"6","1","4","6","4",
+"1","2","5","6","6",
+"1","2","6","6","5",
+"4","5","6","6","2",
+"6","5","2","5","4",
+"4","6","1","5","2",
+"5","2","3","4","1",
+"6","1","1","3","1",
+"5","1","2","5","4"
+)
+
+VDevictor <- c(
+"2","1","1","4","2",
+"4","1","4","6","4",
+"1","2","5","5","4",
+"1","5","3","5","6",
+"4","4","5","6","5",
+"6","5","5","6","1",
+"2","6","4","4","6",
+"5","1","5","1","1",
+"5","1","5","3","1",
+"5","1","5","5","4"
+)
+```
+
+### Confusion Matrix
+```{r}
+#install.packages("caret")
+library(caret)
+DKane_factor <- factor(DKane)
+VDevictor_factor <- factor(VDevictor, levels = levels(DKane_factor))
+conf_matrix <- confusionMatrix(data = VDevictor_factor, reference = DKane_factor)
+conf_matrix
+```
+Les valeurs sur la diagonale sont les valeurs correctes, et celles en-dehors sont les valeurs attribuées différemment par VDV et DK. Rappel des valeurs attribuables à chaque article : 
+1 = Approche historicisante / naturalisante du fait colonial ; perçu comme appartenant entièrement au passé, et déterminant certains écosystèmes actuels
+2 = Approche interactionniste ; imortance de l’agencéité des acteurs concernés
+3 = Autres
+4 = Approche managériale ; plus de justice pour une science plus efficace ; importance de l’intégration des savoirs locaux aux connaissances scientifiques
+5 = Approche décoloniale réformiste ?  : volonté de ‘décoloniser’ les institutions déjà en place ; approches métaphorisant la décolonisation (ex : ‘décoloniser notre rapport à la nature’)
+6 = Approche décoloniale révolutionnaire ? Radicale ? : changements complets des approches scientifiques
+
+
+La précision de la matrice de confusion est très faible ( Accuracy = 52% < 60%) ; de même que la Sensibilité des classes (probabilité que les choix de DK soient reproduits par VDV).
+La probabilité d'avoir fait le même choix de classement est 40% plus élevée qu'en ayant effectué un choix aléatoire (Kappa = 0.4123)
+
+
+```{r}
+library(ggplot2)
+conf_df <- as.data.frame(conf_matrix$table)
+
+# Heatmap pour la matrice de confusion
+ggplot(conf_df, aes(x = Prediction, y = Reference, fill = Freq)) +
+  
+  # Une tuile par cellule
+  geom_tile(color = "white") +
+  
+  # Afficher la valeur dans la tuile
+  geom_text(aes(label = Freq)) +
+  
+  # Renverser l'axe des y pour que la ligne du haut corresponde
+  #scale_y_discrete(limits = rev(unique(conf_df$Reference))) +
+  
+  # Titres
+  labs(
+    title = "Matrice de confusion pour l'attribution de catégories aux articles du corpus",
+    x = "Valeur attribuée par V. Devictor",
+    y = "Valeur attribuée par D. Kane"
+  )
+```
+
+
+Les plus grosses différences de classement proviennent des choix divergents concernant les catégories 6 et 5 (gradient de radicalité des postures décoloniales), et les catégories 2 et 5 (différence entre posture interactionniste VS posture décoloniale réformiste).
+
+4 articles ont été désignés comme Décoloniaux Réformistes par VDV, en ayant été désignés comme Interactionnistes par DK. Une différence semble provenir de l'importance relative accordée aux différentes parties des abstracts (Description VS Prescription), ainsi qu'aux poids donné à des mots clés comme Agency ou Decolonization. Une définition plus précise de la posture interactionniste semble être requise (par ex. parfois associée à une critique de la pensée décoloniale).
+
+4 articles identifiés comme décoloniaux ont été désignés comme plus radicaux par DK que par VDV.
+
+
+
+## Comparaison entre les classifications de DK et VD: Matrice de confusion après 
+la 2e phase de discussion 
+
+### Résultats individuels
+```{r message=FALSE, warning=FALSE}
+DKane <- c("1","2","3","4","1",
+           "1","4","5","3","4",
+           "2","4","1","4","6",
+           "4","2","2","4","3",
+           "4","4","1","3","2",
+           "1","3","4","1","4",
+           "1","3","4","5","4",
+           "4","3","4","5","4",
+           "4","3","4","4","5",
+           "4","4","4","4","1")
+
+VDevictor <- c("2","1","3","4","1",
+               "1","3","3","3","3",
+               "3","4","1","4","3",
+               "4","2","2","3","1",
+               "3","4","4","3","2",
+               "1","1","4","1","4",
+               "1","1","4","5","2",
+               "4","1","4","5","4",
+               "4","6","4","5","4",
+               "5","4","4","4","1")
+```
+
+### Confusion Matrix
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#install.packages("caret")
+library(caret)
+DKane_factor <- factor(DKane)
+VDevictor_factor <- factor(VDevictor, levels = levels(DKane_factor))
+conf_matrix <- confusionMatrix(data = VDevictor_factor, reference = DKane_factor)
+conf_matrix
+```
+
+Les valeurs sur la diagonale sont les valeurs attribuées de manière identique aux mêmes articles par VD et DK, et celles en-dehors sont les valeurs attribuées différemment par VD et DK. Mise à jour des valeurs attribuables à chaque article : 
+
+1 = *Approche historicisante / naturalisante du fait colonial* : perçu comme appartenant entièrement au passé, et déterminant certains écosystèmes actuels
+
+2 = *Approche interactionniste* : importance de l’agencéité des acteurs concernés ; description le plus souvent sans portée prescriptive, tout en présentant la situation coloniale comme un objet actuel et non purement historique
+
+3 = *Approche managériale* : plus de justice pour une science plus efficace ; importance de l’intégration des savoirs locaux aux connaissances scientifiques. L'objectif final est la
+protection de la biodiversité, et pas forcément l'éthique et/ou la justice sociale, qui est vue comme un moyen de mieux protéger la biodiversité (par exemple au sein d'aires protégées).
+
+4 = *Approche décoloniale réformiste* : volonté de ‘décoloniser’ les institutions déjà en place ; approches métaphorisant la décolonisation (ex : ‘décoloniser notre rapport à la nature’) ; proposition de guides pour rendre les sciences plus inclusives. Posture intérmédiaire entre la posture managériale (qui ne mentionne pas explicitement la décolonisation) et l'approche décoloniale radicale (plus critique, ne s'interdit pas de proposer un changement plus profond).
+L'objectif final est d'ordre éthique et/ou de justice sociale, le plus souvent de manière 'gagnant-gagnant' entre les différents acteurs de la conservation, et pas forcément la protection de la biodiversité à tout prix.
+
+5 = *Approche décoloniale radicale* : critique de la science telle qu'elle se pratique aujourd'hui, au regard de la situation coloniale ; mention explicite d'une nécessité de changements radicaux, sans forcément chercher à arriver à une situation 'gagnant-gagnant" entre les différents acteurs.
+Les enjeux de décolonisation et de conservation telle qu'elle se pratique aujourd'hui peuvent être présentés comme incommensurables. 
+
+6 = *Autres*
+
+
+La précision de la matrice de confusion est meilleure qu'avant la deuxième phase de concertation mais reste faible ( Accuracy = 62% < 80 %), de même que la Sensibilité des classes (probabilité que les choix de DK soient reproduits par VD).
+La probabilité d'avoir fait le même choix de classement est 48% plus élevée qu'en ayant effectué un choix aléatoire (Kappa = 0.4881).
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+conf_df <- as.data.frame(conf_matrix$table)
+
+# Heatmap pour la matrice de confusion
+ggplot(conf_df, aes(x = Prediction, y = Reference, fill = Freq)) +
+  
+  # Une tuile par cellule
+  geom_tile(color = "white") +
+  
+  # Afficher la valeur dans la tuile
+  geom_text(aes(label = Freq)) +
+  
+  # Renverser l'axe des y pour que la ligne du haut corresponde
+  #scale_y_discrete(limits = rev(unique(conf_df$Reference))) +
+  
+  # Titres
+  labs(
+    title = "Matrice de confusion pour l'attribution de catégories 
+    
+                          aux articles du corpus",
+    x = "Valeur attribuée par V. Devictor",
+    y = "Valeur attribuée par D. Kane"
+  )
+```
+
+
+Les plus grosses différences de classement proviennent des choix divergents concernant les catégories 3 et 4 (gradient de prescription des postures managériale VS déécoloniale réformiste), et les catégories 3 et 1 (différence entre posture managériale VS posture historicisante).
+
+Lors de l'analyse précédente, certains articles avaient été désignés comme Décoloniaux Réformistes par VD, en ayant été désignés comme Interactionnistes par DK. Une différence semblait provenir de l'importance relative accordée aux différentes parties des abstracts (Description VS Prescription), ainsi qu'aux poids donné à des mots clés comme Agency ou Decolonization. Une définition plus précise de la posture interactionniste semblait être requise (par ex. parfois associée à une critique de la pensée décoloniale). A l'issue de cette analyse, il semblerait que la différence entre les deux catégories ait été éclaircie.
+
+De même, l'augmentation du nombre d'articles classés comme 'décoloniaux réformistes' montre que VD et DK sont plutôt d'accord sur le gradient de radicalité des articles.
+
+
+
+# Analyse des méthodes employées par catégorie :
+
+Visualisation, 1er jet :
+```{r}
+# packages
+#install.packages(c("tidyverse","janitor","scales")) # une seule fois
+library(tidyverse); library(janitor); library(scales)
+
+# lire le fichier (remplacer path)
+df <- read_csv("C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Méthodes par catégorie/methodes.csv", col_types = cols(.default = "c"))
+
+# noms de colonnes supposés: 'categorie' et 'methods'
+# nettoyage de base et séparation des méthodes
+df2 <- df %>%
+  rename(category = categorie, methods = methodes) %>%
+  mutate(category = trimws(as.character(category)),
+         methods = if_else(is.na(methods),"", methods)) %>%
+  # standardiser séparateurs ; some entries may have non-breaking spaces
+  mutate(methods = str_replace_all(methods, "[\u00A0]", " "),
+         methods = str_replace_all(methods, "\\s*;\\s*", ";")) %>%
+  filter(category != "")
+
+# séparer en lignes par méthode
+long <- df2 %>%
+  mutate(id = row_number()) %>%
+  separate_rows(methods, sep = ";") %>%
+  mutate(methods = trimws(methods)) %>%
+  filter(methods != "")
+
+# option : normaliser orthographes courantes (exemples)
+# long <- long %>% mutate(methods = case_when(
+#   str_to_lower(methods) %in% c("case study","case studies") ~ "Case study",
+#   TRUE ~ str_to_title(methods)
+# ))
+
+# table de contingence : counts par catégorie x méthode
+tab <- long %>%
+  count(category, methods, name = "n") %>%
+  group_by(category) %>%
+  mutate(total_in_cat = sum(n),
+         pct = n/total_in_cat) %>%
+  ungroup()
+
+# pour affichage propre : garder méthodes les plus fréquentes (ex : top 20) et regrouper le reste
+top_methods <- tab %>% group_by(methods) %>% summarise(all_n = sum(n)) %>%
+  arrange(desc(all_n)) %>% slice_head(n = 20) %>% pull(methods)
+
+tab2 <- tab %>%
+  mutate(methods2 = if_else(methods %in% top_methods, methods, "Other")) %>%
+  group_by(category, methods2) %>%
+  summarise(n = sum(n), total_in_cat = first(total_in_cat), .groups = "drop") %>%
+  mutate(pct = n/total_in_cat)
+
+# Graphique 1 : stacked bar (proportions) — recommandé pour voir répartitions
+ggplot(tab2, aes(x = factor(category), y = pct, fill = methods2)) +
+  geom_col(position = "fill") +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Catégorie", y = "Part des méthodes (%)", fill = "Méthode",
+       title = "Répartition des méthodes par catégorie (proportionnel)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0))
+
+# Graphique 2 : grouped bar (comptages absolus) — utile pour comparer volumes
+ggplot(tab2 %>% mutate(n = replace_na(n,0)), aes(x = factor(category), y = n, fill = methods2)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  labs(x = "Catégorie", y = "Nombre d'occurrences", fill = "Méthode",
+       title = "Comptage des méthodes par catégorie") +
+  theme_minimal()
+
+```
+
+Analyse des méthodes employées par catégorie, en pourcentage et nombre d'occurences : Graphe bilan
+```{r}
+
+library(tidyverse); library(scales); library(colorspace); library(RColorBrewer)
+
+# paramètres
+input_file <- "C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Méthodes par catégorie/methodes.csv"
+top_n_methods <- 100   # ajustez si nécessaire
+label_threshold <- 0 # 0.001% = 0.00001 en proportion
+
+# lire et préparer
+df <- read_csv(input_file, col_types = cols(.default = "c")) %>%
+  rename(category = categorie, methods = methodes) %>%
+  mutate(category = trimws(as.character(category)),
+         methods = replace_na(methods, ""),
+         methods = str_replace_all(methods, "[\u00A0]", " "),
+         methods = str_replace_all(methods, "\\s*;\\s*", ";")) %>%
+  filter(category != "")
+
+long <- df %>%
+  mutate(doc_id = row_number()) %>%
+  separate_rows(methods, sep = ";") %>%
+  mutate(methods = trimws(methods)) %>%
+  filter(methods != "")
+
+# table d'occurrences
+occ_tab <- long %>%
+  group_by(category) %>%
+  mutate(total_occ_in_cat = n()) %>%
+  ungroup() %>%
+  group_by(category, methods) %>%
+  summarise(
+    occ = n(),
+    n_articles_with_method = n_distinct(doc_id),
+    total_occ_in_cat = first(total_occ_in_cat),
+    .groups = "drop"
+  ) %>%
+  mutate(pct_occ = if_else(total_occ_in_cat > 0, occ / total_occ_in_cat, 0))
+
+# regrouper top méthodes
+top_methods <- occ_tab %>% group_by(methods) %>% summarise(total_occ = sum(occ)) %>%
+  arrange(desc(total_occ)) %>% slice_head(n = top_n_methods) %>% pull(methods)
+
+plot_tab <- occ_tab %>%
+  mutate(methods2 = if_else(methods %in% top_methods, methods, "Other")) %>%
+  group_by(category, methods2) %>%
+  summarise(
+    occ = sum(occ),
+    n_articles_with_method = sum(n_articles_with_method),
+    total_occ_in_cat = first(total_occ_in_cat),
+    .groups = "drop"
+  ) %>%
+  mutate(pct_occ = if_else(total_occ_in_cat > 0, occ / total_occ_in_cat, 0),
+         label_full = paste0(methods2, " (", n_articles_with_method, ")"),
+         label = if_else(pct_occ >= label_threshold, label_full, ""))
+
+# palette dynamique
+n_methods <- n_distinct(plot_tab$methods2)
+pal <- if (n_methods <= 9) {
+  brewer.pal(max(3, n_methods), "Set2")[1:n_methods]
+} else {
+  qualitative_hcl(n_methods, palette = "Dark 3")
+}
+names(pal) <- sort(unique(plot_tab$methods2))
+
+# calcul positions empilées et associer couleur hex
+plot_for_labels <- plot_tab %>%
+  group_by(category) %>%
+  arrange(desc(pct_occ), .by_group = TRUE) %>%
+  mutate(ymin = cumsum(lag(pct_occ, default = 0)),
+         ymax = ymin + pct_occ,
+         ycenter = ymin + pct_occ/2) %>%
+  ungroup() %>%
+  mutate(fill_hex = pal[as.character(methods2)],
+         fill_hex = ifelse(is.na(fill_hex), "#CCCCCC", fill_hex))  # fallback
+
+# fonction luminance -> choisir couleur texte
+hex_to_lum <- function(hexcol){
+  rgb <- col2rgb(hexcol) / 255
+  Y <- 0.2126 * rgb[1,] + 0.7152 * rgb[2,] + 0.0722 * rgb[3,]
+  return(as.numeric(Y))
+}
+plot_for_labels <- plot_for_labels %>%
+  mutate(lum = hex_to_lum(fill_hex),
+         text_color = if_else(lum < 0.3, "white", "black"))
+
+# Définir explicitement l'ordre des niveaux de methods2 tel qu'utilisé pour calculs (ici tri asc par nom)
+method_levels <- sort(unique(plot_for_labels$methods2))
+# Si tu veux un ordre par pct décroissant au sein de chaque catégorie, construis un vecteur ordre global adapté.
+plot_tab <- plot_tab %>% mutate(methods2 = factor(methods2, levels = method_levels))
+plot_for_labels <- plot_for_labels %>% mutate(methods2 = factor(methods2, levels = method_levels))
+
+# Vérif rapide : les mêmes combinaisons category/methods2 dans les deux tables, mêmes niveaux
+stopifnot(all(levels(plot_tab$methods2) == levels(plot_for_labels$methods2)))
+offset <- 0.01
+p_final <- ggplot(plot_tab, aes(x = category, y = pct_occ, fill = methods2)) +
+  geom_col() +
+  geom_text(
+    data = plot_for_labels %>% filter(label != ""),
+    aes(x = category, label = label, color = text_color),
+    position = position_stack(vjust = 0.5),
+    size = 3
+  ) +
+  scale_color_identity() +
+  scale_fill_manual(values = pal) +
+  scale_y_continuous(labels = percent_format(accuracy = 0.01)) +
+  scale_x_discrete(limits=c("Historicisante",
+                               "Interactionniste",
+                               "Managériale",
+                               "Décoloniale réformiste",
+                               "Décoloniale radicale")) +
+  labs(x = "Approche", y = "Méthodes utilisées (%)", title = "Méthodes utilisées au sein de chaque approche") +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 0))
+
+print(p_final)
+
+
+```
+
+
+Annexe : Pourcentage d'occurrence de chaque méthode, par catégorie (manière de visualiser par méthode et non par catégorie)
+```{r}
+# installer si besoin
+#install.packages(c("ggtext"))
+
+library(tidyverse); library(janitor); library(scales); library(ggtext)
+
+# lire le fichier
+df <- read_csv("C:/Users/kane/Nextcloud3/travail/ECOSYSTEMES/Stage/Stage M2/StageCEFE_M2/biblio/Analyse_Bibliometrique/Méthodes par catégorie/methodes.csv", col_types = cols(.default = "c"))
+
+# standardiser noms
+df2 <- df %>%
+  rename(category = categorie, methods = methodes) %>%
+  mutate(category = trimws(as.character(category)),
+         methods = if_else(is.na(methods), "", methods),
+         methods = str_replace_all(methods, "[\u00A0]", " "),
+         methods = str_replace_all(methods, "\\s*;\\s*", ";")) %>%
+  filter(category != "")
+
+# séparer en lignes par méthode, garder doc_id pour compter articles distincts
+long <- df2 %>%
+  mutate(doc_id = row_number()) %>%
+  separate_rows(methods, sep = ";") %>%
+  mutate(methods = trimws(methods)) %>%
+  filter(methods != "")
+
+# ---Calcul : pourcentage d'occurrences par catégorie ---
+# occurrences = nombre de mentions de chaque méthode dans la catégorie
+occ_tab <- long %>%
+  group_by(category) %>%
+  mutate(total_occ_in_cat = n()) %>%    # total mentions dans la catégorie
+  ungroup() %>%
+  group_by(category, methods) %>%
+  summarise(
+    occ = n(),                           # occurrences (mentions)
+    n_articles_with_method = n_distinct(doc_id), # nb d'articles distincts qui utilisent la méthode
+    total_occ_in_cat = first(total_occ_in_cat),
+    .groups = "drop"
+  ) %>%
+  mutate(pct_occ = occ / total_occ_in_cat)
+
+# Option : garder top méthodes globales et regrouper le reste en "Other" si trop de modalités
+top_methods <- occ_tab %>% group_by(methods) %>% summarise(total_occ = sum(occ)) %>%
+  arrange(desc(total_occ)) %>% slice_head(n = 100) %>% pull(methods)  # ajustez n
+
+occ_plot_tab <- occ_tab %>%
+  mutate(methods2 = if_else(methods %in% top_methods, methods, "Other")) %>%
+  group_by(category, methods2) %>%
+  summarise(
+    occ = sum(occ),
+    n_articles_with_method = sum(n_articles_with_method), # somme approchée pour Other
+    total_occ_in_cat = first(total_occ_in_cat),
+    .groups = "drop"
+  ) %>%
+  mutate(pct_occ = if_else(total_occ_in_cat > 0, occ / total_occ_in_cat, 0),
+         label = as.character(n_articles_with_method),
+         label = if_else(is.na(label) | label == "", "0", label))
+
+
+# ---  Graphique avec annotations : pourcentage d'occurrence par méthode par catégorie
+# ici on trace barres (pourcentage) par (category, methods2) groupées pour comparer méthodes
+p2 <- ggplot(occ_plot_tab, aes(y = methods2, x = pct_occ, fill = factor(category))) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_fill_manual(values = c("Historicisante" = "grey70",
+                               "Interactionniste" = "violet",
+                               "Managériale" = "forestgreen",
+                               "Décoloniale réformiste" = "gold",
+                               "Décoloniale radicale" = "orange"),
+                    breaks = c("Historicisante",
+                               "Interactionniste",
+                               "Managériale",
+                               "Décoloniale réformiste",
+                               "Décoloniale radicale"),
+                    name = "Approche") +
+  labs(y = "Méthode", x = "Pourcentage des mentions pour chaque approche",
+       title = "Pourcentage d'occurrences de chaque méthode, par approche du corpus") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_text(aes(label = label),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 3)
+
+
+# afficher
+
+print(p2)
+
+# --- Table de sortie pour vérification ---
+# table avec pct et nb articles
+occ_plot_tab %>% arrange(category, desc(pct_occ)) %>%
+  mutate(pct_display = percent(pct_occ, accuracy = 0.1)) %>%
+  select(category, methods2, occ, n_articles_with_method, pct_display) %>%
+  print(n = 200)
+
+```
+
+```
+
